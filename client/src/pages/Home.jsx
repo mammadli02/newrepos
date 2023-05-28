@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { GETAll } from '../api/request'
+import { Deleted, GETAll } from '../api/request'
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import { Card, Typography } from 'antd';
@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import { TextField } from '@mui/material';
 import { Helmet } from 'react-helmet';
+import Swal from 'sweetalert2'
 const Home = () => {
     const [cards, setCards]=useState([])
     useEffect(()=>{
@@ -61,13 +62,38 @@ cards && cards.map((card)=>{
     <Typography>
       {card.parag}
     </Typography>
+<Button variant="contained" onClick={()=>{
+  Swal.fire({
+    title: 'Are you sure?',
+    text: "You won't be able to revert this!",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Yes, delete it!'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      Deleted(card._id).then((res)=>{
+        Swal.fire(
+            // `${res.name} Deleted!` ,
+            ` Deleted!` ,
+          'Your file has been deleted.',
+          'success'
+        )
+
+      })
+      setCards(cards.filter((x)=>x._id!== cards._id))
+    }
+  })
+}} >delete</Button>
+    
+<Button variant="contained" ><Link to={`/cards/edit/${card._id}`}>Edit</Link></Button>
   </Card>
 
 </Grid>
 
     )
 })
-
 
 }      
 </Grid>
